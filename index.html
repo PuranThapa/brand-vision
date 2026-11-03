@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>BrandVision · Tee mockup studio</title>
+  <meta name="description" content="Put your logo on a 3D tee, pick the print spot and colour, and turn it to see the print move with the fabric. Works offline." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23141414'/%3E%3Cpath d='M11 7l-6 4 2.5 4.5L10 14v11h12V14l2.5 1.5L27 11l-6-4c-.8 2-2.7 3-5 3s-4.2-1-5-3z' fill='%23F4F3EF'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#controls">Skip to controls</a>
+
+  <header class="top">
+    <nav class="bar" aria-label="Main">
+      <div class="brand">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M11 7l-6 4 2.5 4.5L10 14v11h12V14l2.5 1.5L27 11l-6-4c-.8 2-2.7 3-5 3s-4.2-1-5-3z" fill="var(--panel)"/></svg>
+        <span>BrandVision</span>
+      </div>
+
+      <div class="seg" role="radiogroup" aria-label="Garment" data-active="crew">
+        <span class="seg-thumb" aria-hidden="true"></span>
+        <button type="button" role="radio" aria-checked="true" data-garment="crew">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 4 3.5 7l2 3.5L7.5 9.5V20h9V9.5l2 1 2-3.5-5-3c-.6 1.5-2 2.3-3.5 2.3S9.1 5.5 8.5 4Z"/></svg>
+          <span>Round neck tee</span>
+        </button>
+        <button type="button" role="radio" aria-checked="false" data-garment="vneck">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 4 3.5 7l2 3.5L7.5 9.5V20h9V9.5l2 1 2-3.5-5-3L12 9.5 8.5 4Z"/></svg>
+          <span>V neck tee</span>
+        </button>
+      </div>
+
+      <button type="button" class="btn btn-sm" id="saveBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M4.5 15.5v3a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-3"/></svg>
+        <span>Save image</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section class="stage" id="stage" aria-label="3D tee preview">
+      <canvas id="view" tabindex="0" aria-label="3D tee. Drag or use the arrow keys to turn it."></canvas>
+
+      <div class="skeleton" id="skeleton" aria-hidden="true">
+        <div class="sk-tee"></div>
+        <div class="sk-line"></div>
+      </div>
+
+      <div class="nogl" id="noGL" hidden>
+        <h2>3D preview is turned off in this browser</h2>
+        <p>Turn on hardware acceleration in your browser settings, then reload this page.</p>
+      </div>
+
+      <p class="hint" id="hint">Drag to turn the tee. Click the logo to move it.</p>
+
+      <div class="edit-tip" id="editTip" hidden>
+        <span>Drag to move. Drag a corner to resize.</span>
+        <button type="button" id="editDone">Done</button>
+      </div>
+
+      <div class="viewbar" role="toolbar" aria-label="View">
+        <button type="button" class="vb" id="vFront">Front</button>
+        <button type="button" class="vb" id="vSide">Side</button>
+        <button type="button" class="vb" id="vBack">Back</button>
+        <span class="vb-sep" aria-hidden="true"></span>
+        <button type="button" class="vb toggle" id="tBreeze" aria-pressed="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3M3 12h7"/></svg>
+          <span>Breeze</span>
+        </button>
+        <button type="button" class="vb toggle" id="tSpin" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v4.5h-4.5"/></svg>
+          <span>Spin</span>
+        </button>
+      </div>
+    </section>
+
+    <aside class="panel" id="controls" aria-label="Customise">
+      <section class="group" aria-labelledby="hLogo">
+        <h2 id="hLogo">Logo</h2>
+        <label class="drop" id="drop">
+          <input type="file" id="logoFile" accept="image/png,image/webp,image/svg+xml,image/jpeg" />
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L7.5 8.5M12 4l4.5 4.5M4.5 15.5v3a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-3"/></svg>
+          <span class="drop-title">Upload your logo</span>
+          <span class="drop-sub">Transparent PNG works best. Drop it here or anywhere on the preview.</span>
+          <span class="drop-bar" aria-hidden="true"></span>
+        </label>
+        <p class="error" id="logoError" role="alert" hidden></p>
+
+        <div class="logo-card" id="logoCard" hidden>
+          <canvas id="logoThumb" width="96" height="96" aria-hidden="true"></canvas>
+          <div class="logo-info">
+            <span id="logoName">Sample logo</span>
+            <span id="logoMeta" class="muted">Upload yours to replace it</span>
+          </div>
+          <button type="button" class="icon-btn" id="removeLogo" aria-label="Remove logo" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="hFit">
+        <h2 id="hFit">Fit</h2>
+        <div class="switch-row">
+          <div class="switch-text">
+            <span class="switch-label" id="lCrop">Cropped</span>
+            <p class="note">Women's crop: shorter body that ends near the waist, shaped at the chest.</p>
+          </div>
+          <button type="button" role="switch" class="switch" id="cropSwitch" aria-checked="false" aria-labelledby="lCrop">
+            <span class="knob" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div class="switch-row">
+          <div class="switch-text">
+            <span class="switch-label" id="lFit">Fitted</span>
+            <p class="note">Slim women's cut with a shaped waist and shorter sleeves.</p>
+          </div>
+          <button type="button" role="switch" class="switch" id="fitSwitch" aria-checked="false" aria-labelledby="lFit">
+            <span class="knob" aria-hidden="true"></span>
+          </button>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="hCollar">
+        <div class="switch-row">
+          <div class="switch-text">
+            <h2 id="hCollar">Collar</h2>
+            <p class="note" id="collarNote">Available on the V neck tee. Switch to it at the top.</p>
+          </div>
+          <button type="button" role="switch" class="switch" id="collarSwitch" aria-checked="false" aria-labelledby="hCollar" disabled>
+            <span class="knob" aria-hidden="true"></span>
+          </button>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="hFront">
+        <h2 id="hFront">Front print</h2>
+        <div class="chips" role="radiogroup" aria-labelledby="hFront">
+          <button type="button" role="radio" class="chip" data-front="none" aria-checked="false">None</button>
+          <button type="button" role="radio" class="chip" data-front="center" aria-checked="true">Center chest</button>
+          <button type="button" role="radio" class="chip" data-front="left" aria-checked="false">Left chest</button>
+          <button type="button" role="radio" class="chip" data-front="right" aria-checked="false">Right chest</button>
+        </div>
+        <p class="note">Left and right are the wearer's sides. Click the logo on the tee to drag it anywhere.</p>
+        <div class="adjust" id="frontAdjust">
+          <label class="range"><span>Size <output id="frontSizeOut">100%</output></span>
+            <input type="range" id="frontSize" min="30" max="220" value="100" /></label>
+          <label class="range"><span>Height</span>
+            <input type="range" id="frontY" min="-50" max="40" value="0" /></label>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="hBack">
+        <h2 id="hBack">Back print</h2>
+        <div class="chips" role="radiogroup" aria-labelledby="hBack">
+          <button type="button" role="radio" class="chip" data-back="none" aria-checked="false">None</button>
+          <button type="button" role="radio" class="chip" data-back="upper" aria-checked="true">Upper back</button>
+          <button type="button" role="radio" class="chip" data-back="center" aria-checked="false">Center back</button>
+        </div>
+        <div class="adjust" id="backAdjust">
+          <label class="range"><span>Size <output id="backSizeOut">100%</output></span>
+            <input type="range" id="backSize" min="30" max="220" value="100" /></label>
+          <label class="range"><span>Height</span>
+            <input type="range" id="backY" min="-60" max="30" value="0" /></label>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="hColor">
+        <h2 id="hColor">Tee colour <span class="muted" id="colorName">Natural white</span></h2>
+        <div class="swatches" role="radiogroup" aria-labelledby="hColor">
+          <button type="button" role="radio" class="swatch" data-color="#F4F3EF" data-name="Natural white" aria-label="Natural white" aria-checked="true" style="--c:#F4F3EF"></button>
+          <button type="button" role="radio" class="swatch" data-color="#1B1B1D" data-name="Black" aria-label="Black" aria-checked="false" style="--c:#1B1B1D"></button>
+          <button type="button" role="radio" class="swatch" data-color="#9C9B98" data-name="Heather grey" aria-label="Heather grey" aria-checked="false" style="--c:#9C9B98"></button>
+          <button type="button" role="radio" class="swatch" data-color="#1E2A44" data-name="Navy" aria-label="Navy" aria-checked="false" style="--c:#1E2A44"></button>
+          <button type="button" role="radio" class="swatch" data-color="#2B4FA3" data-name="Royal blue" aria-label="Royal blue" aria-checked="false" style="--c:#2B4FA3"></button>
+          <button type="button" role="radio" class="swatch" data-color="#A9262F" data-name="Cardinal red" aria-label="Cardinal red" aria-checked="false" style="--c:#A9262F"></button>
+          <button type="button" role="radio" class="swatch" data-color="#2E4A3B" data-name="Forest" aria-label="Forest" aria-checked="false" style="--c:#2E4A3B"></button>
+          <button type="button" role="radio" class="swatch" data-color="#D6A23A" data-name="Mustard" aria-label="Mustard" aria-checked="false" style="--c:#D6A23A"></button>
+          <button type="button" role="radio" class="swatch" data-color="#E6B9B4" data-name="Blush" aria-label="Blush" aria-checked="false" style="--c:#E6B9B4"></button>
+          <button type="button" role="radio" class="swatch" data-color="#D5C7AE" data-name="Sand" aria-label="Sand" aria-checked="false" style="--c:#D5C7AE"></button>
+          <label class="swatch custom" aria-label="Custom colour">
+            <input type="color" id="customColor" value="#7a5cff" />
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </label>
+        </div>
+      </section>
+
+      <p class="foot">Runs fully offline. Your logo never leaves this device.</p>
+    </aside>
+  </main>
+
+  <div class="sr-only" id="status" role="status" aria-live="polite"></div>
+
+  <script src="vendor/three.min.js"></script>
+  <script src="js/garment.js"></script>
+  <script src="js/textures.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
